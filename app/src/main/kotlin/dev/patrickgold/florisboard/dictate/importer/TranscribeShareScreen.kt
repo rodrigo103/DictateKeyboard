@@ -88,6 +88,8 @@ import dev.patrickgold.florisboard.dictate.data.prompts.PromptsDatabaseHelper
 import dev.patrickgold.florisboard.dictate.data.prompts.snippetBody
 import dev.patrickgold.florisboard.dictate.dictateProxyConfig
 import dev.patrickgold.florisboard.dictate.provider.DictateRewording
+import dev.patrickgold.florisboard.dictate.provider.LocalModelCatalog
+import dev.patrickgold.florisboard.dictate.provider.LocalModelManager
 import dev.patrickgold.florisboard.dictate.provider.OpenAiCompatibleClient
 import dev.patrickgold.florisboard.dictate.provider.ProviderRegistry
 import dev.patrickgold.florisboard.dictate.provider.TranscriptionApi
@@ -238,7 +240,11 @@ fun TranscribeShareScreen(uris: List<Uri>, onClose: () -> Unit) {
                             text = result,
                             providerId = account.providerId,
                             providerName = account.displayName.ifBlank { preset.displayName },
-                            model = account.transcriptionModel.ifBlank { preset.defaultTranscriptionModel ?: "" },
+                            model = LocalModelCatalog.resolveForLanguage(
+                                chosen = account.transcriptionModel.ifBlank { preset.defaultTranscriptionModel ?: "" },
+                                language = prefs.dictate.activeInputLanguage.get(),
+                                installed = LocalModelManager.installedIds(context),
+                            ),
                             language = prefs.dictate.activeInputLanguage.get()
                                 .takeIf { it != DictateLanguages.DETECT } ?: "",
                             durationSecs = info?.durationSecs ?: 0L,

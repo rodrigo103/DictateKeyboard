@@ -21,6 +21,8 @@ import dev.patrickgold.florisboard.dictate.audio.AudioWav
 import dev.patrickgold.florisboard.dictate.audio.AudioSpeedUp
 import dev.patrickgold.florisboard.dictate.audio.SpeechGate
 import dev.patrickgold.florisboard.dictate.dictateProxyConfig
+import dev.patrickgold.florisboard.dictate.provider.LocalModelCatalog
+import dev.patrickgold.florisboard.dictate.provider.LocalModelManager
 import dev.patrickgold.florisboard.dictate.provider.LocalTranscriptionProvider
 import dev.patrickgold.florisboard.dictate.provider.OpenAiCompatibleClient
 import dev.patrickgold.florisboard.dictate.provider.ProviderAccount
@@ -110,7 +112,14 @@ object ImportTranscriber {
         val account = accountFor(prefs)
         val preset = presetFor(account)
         val onDevice = preset.transcriptionApi == TranscriptionApi.LOCAL_ONDEVICE
-        val model = account.transcriptionModel.ifBlank { preset.defaultTranscriptionModel ?: "" }
+        // The dictation language decides which on-device model runs (Canary speaks four languages,
+        // SenseVoice five); a file in a language the chosen model cannot take goes to one that can,
+        // when that model is installed.
+        val model = LocalModelCatalog.resolveForLanguage(
+            chosen = account.transcriptionModel.ifBlank { preset.defaultTranscriptionModel ?: "" },
+            language = prefs.dictate.activeInputLanguage.get(),
+            installed = LocalModelManager.installedIds(appContext),
+        )
 
         // Only announced when it is really about to happen: a short voice note has nothing to unpack,
         // and naming a step that takes no time is how "Preparing…" got its reputation.
