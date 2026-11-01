@@ -10,6 +10,8 @@
 
 package dev.patrickgold.florisboard.ime.nlp.latin
 
+import java.text.Normalizer
+import java.util.Locale
 import kotlin.math.ln
 
 /**
@@ -29,6 +31,26 @@ import kotlin.math.ln
  * the same reason [TouchScoring] is its own object.
  */
 internal object CorrectionReaders {
+
+    /**
+     * True when [typed] and [candidate] differ only in their diacritics: `cancion` / `canción`,
+     * `comiamos` / `comíamos`, `tenes` / `tenés`. Case is ignored.
+     *
+     * Used to let an accent-only fix commit silently below the usual frequency floor. The correction
+     * path runs only for a typed word the dictionary does not know, so the accented spelling is the
+     * only reading — the minimal-pair danger (`esta` / `está`) never reaches it, because the accent-less
+     * form there is itself a word.
+     */
+    fun hasOnlyAccentDifferences(typed: String, candidate: String): Boolean {
+        if (typed.equals(candidate, ignoreCase = true)) return false
+        return stripDiacritics(typed) == stripDiacritics(candidate)
+    }
+
+    private fun stripDiacritics(text: String): String =
+        Normalizer.normalize(text.lowercase(Locale.ROOT), Normalizer.Form.NFD)
+            .replace(DIACRITICS, "")
+
+    private val DIACRITICS = Regex("\\p{Mn}+")
 
     // Keyboard-proximity noisy-channel model of the edit-distance reader (Tier 1). Distances are in
     // key-width² units. Its own constants, kept apart from [TouchScoring], so the ranking without a trace
