@@ -92,8 +92,12 @@ object GlideDictionaryCatalog {
         GlideDict("vi", "Vietnamese · Tiếng Việt", "$REL/vi.json", 202701, "3f1669574875da6491db36f6fe291d31827de4de95e0b4658be271b82db57c07"),
     )
 
-    /** Languages whose dictionary ships inside the APK (ime/dict/<lang>.json) and needs no download. */
-    val BUNDLED = setOf("en", "de")
+    /**
+     * Languages whose dictionary ships inside the APK (ime/dict/<lang>.json) and needs no download.
+     * Spanish is bundled in this build: the stock list is too Peninsular for Rioplatense writing, so
+     * the APK carries an enhanced one instead of fetching it (see `ime/dict/es.json`).
+     */
+    val BUNDLED = setOf("en", "de", "es")
 
     fun forLang(lang: String): GlideDict? =
         all.firstOrNull { it.lang.equals(lang, ignoreCase = true) }

@@ -12,6 +12,7 @@ package dev.patrickgold.florisboard.ime.nlp.latin
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -19,6 +20,17 @@ import kotlin.test.assertTrue
  * they are worth.
  */
 class CorrectionReadersTest {
+
+    @Test
+    fun anAccentOnlyDifferenceIsRecognised() {
+        assertTrue(CorrectionReaders.hasOnlyAccentDifferences("cancion", "canción"))
+        assertTrue(CorrectionReaders.hasOnlyAccentDifferences("comiamos", "comíamos"))
+        assertTrue(CorrectionReaders.hasOnlyAccentDifferences("TENES", "tenés"))
+        assertTrue(CorrectionReaders.hasOnlyAccentDifferences("nino", "niño"))
+        assertFalse(CorrectionReaders.hasOnlyAccentDifferences("oponas", "opinas"))
+        assertFalse(CorrectionReaders.hasOnlyAccentDifferences("casa", "casas"))
+        assertFalse(CorrectionReaders.hasOnlyAccentDifferences("casa", "casa"))
+    }
 
     // ── merge: the fixes of both readers (issue #381, step 3) ─────────────────────────────────────
 

@@ -69,6 +69,14 @@ object AutoCommitGate {
     const val MIN_FREQ = 170
 
     /**
+     * The lower floor an accent-only fix may sit at and still be swapped in silently: `comiamos` for
+     * `comíamos`, `cancion` for `canción`. Accent-less spellings are extremely common, and the typed
+     * form is by construction not a word (the correction path only runs for unknown words), so the
+     * usual [MIN_FREQ] would leave most of these in the strip for no safety gain.
+     */
+    const val ACCENT_ONLY_MIN_FREQ = 140
+
+    /**
      * Excess tap distance per tap (key-width²) a correction may cost and still be swapped in silently.
      *
      * Per tap rather than per word, so the rule does not get stricter simply because the word is longer:

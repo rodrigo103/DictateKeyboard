@@ -436,6 +436,10 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
 
     /** Raw JSON for [lang]: a downloaded dictionary takes precedence over the bundled asset. */
     private fun readDict(lang: String): String {
+        // A bundled language is the build's authority. Spanish used to be downloaded, so a device that
+        // had it before this build would otherwise keep reading the older file from disk and never see
+        // the list that ships in the APK.
+        if (lang in bundledDictLangs) return appContext.assets.readText("ime/dict/$lang.json")
         val downloaded = GlideDictionaryManager.dictFile(appContext, lang)
         return if (downloaded.isFile && downloaded.length() > 0) {
             downloaded.readText()
@@ -1887,7 +1891,11 @@ class LatinLanguageProvider(context: Context) : SpellingProvider, SuggestionProv
                         // Only when nothing of the user's own already took the auto-commit slot: two bold
                         // candidates would be a lie about which one space is going to take.
                         isEligibleForAutoCommit = allowAutoCommit && correction == lead &&
-                            personalFixes.isEmpty() && freq >= AUTOCORRECT_MIN_FREQ,
+                            personalFixes.isEmpty() && (
+                                freq >= AUTOCORRECT_MIN_FREQ ||
+                                    (freq >= AutoCommitGate.ACCENT_ONLY_MIN_FREQ &&
+                                        CorrectionReaders.hasOnlyAccentDifferences(word, correction))
+                                ),
                         sourceProvider = this,
                     ),
                 )
