@@ -33,6 +33,14 @@ more speech engines, in the cloud or on your phone.
 
 </div>
 
+> **This fork** ([rodrigo103/DictateKeyboard](https://github.com/rodrigo103/DictateKeyboard)) adds:
+>
+> - a **Rioplatense Spanish dictionary** — voseo forms and local vocabulary, plus a safe accent-only correction rule;
+> - **per-language on-device model selection** — Canary 180M Flash for Spanish, SenseVoice Small for Chinese, automatically;
+> - an **OpenCode Go rewording preset** — fork-only, since OpenCode Go's terms limit it to OpenCode and coding agents (upstream PR #442 was closed for that reason).
+>
+> Built on upstream `main`, with a small fix to `RealtimeProxyTest`. Upstream project: [DevEmperor/DictateKeyboard](https://github.com/DevEmperor/DictateKeyboard).
+
 ---
 
 ## 🎬 See it in action
