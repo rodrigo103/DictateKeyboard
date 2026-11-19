@@ -330,6 +330,21 @@ object ModelCatalog {
         ModelSpec("deepseek-v4-pro", C, NONE_TO_HIGH, verified = NOV_4),
     )
 
+    /**
+     * OpenCode Go's curated `/chat/completions` models. The ids were read off the live catalog and Go's
+     * endpoint table on 2026-10-03; only the default was exercised for a real rewording that day, so the
+     * other five carry a note instead of a verified date. Chat only: the catalog also lists models served
+     * on /messages and /responses, which this client does not speak.
+     */
+    val OPENCODE_GO = listOf(
+        ModelSpec("deepseek-v4.1-flash", C, verified = LocalDate.of(2026, 10, 3)),
+        ModelSpec("deepseek-v4-flash", C, note = "id read from the live catalog and Go's endpoint table on 2026-10-03; not exercised individually."),
+        ModelSpec("glm-5.3-flash", C, note = "id read from the live catalog and Go's endpoint table on 2026-10-03; not exercised individually."),
+        ModelSpec("kimi-k2.6", C, note = "id read from the live catalog and Go's endpoint table on 2026-10-03; not exercised individually."),
+        ModelSpec("mimo-v2.6-flash", C, note = "id read from the live catalog and Go's endpoint table on 2026-10-03; not exercised individually."),
+        ModelSpec("longcat-2.0", C, note = "id read from the live catalog and Go's endpoint table on 2026-10-03; not exercised individually."),
+    )
+
     val SILICONFLOW = listOf(
         // Checked on the International region (api.siliconflow.com) with the only key there is.
         ModelSpec("deepseek-ai/DeepSeek-V3.2", C, verified = NOV_3),
@@ -385,6 +400,7 @@ object ModelCatalog {
         "azure" to AZURE,
         "xai" to XAI,
         "deepseek" to DEEPSEEK,
+        "opencode-go" to OPENCODE_GO,
         "siliconflow" to SILICONFLOW,
         "scaleway" to SCALEWAY,
         "ovhcloud" to OVHCLOUD,
